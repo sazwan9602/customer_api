@@ -6,8 +6,8 @@ from .schema import Customer
 from . import dependencies as CustomerController
 from src.auth import dependencies as AuthController
 
-# router = APIRouter(dependencies=[Depends(AuthController.getCurrentActiveUser)])
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(AuthController.getCurrentActiveUser)])
+# router = APIRouter()
 
 
 @router.get('/customer/{cid}', status_code=status.HTTP_200_OK)
