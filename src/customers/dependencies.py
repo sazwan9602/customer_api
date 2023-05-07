@@ -6,6 +6,12 @@ from fastapi import HTTPException, status
 
 
 def get(db: Session, cid: int):
+    """
+    Get details of a customer information
+    :param db: database session
+    :param cid: Unique id of a customer info
+    :return: if exist, return a customer details
+    """
     db_customer = db.query(Customer).filter(Customer.id == cid).first()
     if db_customer is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Customer Id not found')
@@ -13,10 +19,23 @@ def get(db: Session, cid: int):
 
 
 def getAll(db: Session, skip: int = 0, limit: int = 10):
+    """
+    Get all customer details in form of list
+    :param db: database session
+    :param skip: offset start from n row
+    :param limit: length of list
+    :return: list of customers
+    """
     return db.query(Customer).offset(skip).limit(limit).all()
 
 
 def add(db: Session, cust: CustomerSchema):
+    """
+    Add new customer into db
+    Check for any existing email before commit
+    :param db: database session
+    :param cust: customer schema
+    """
     email = cust.email
     service.checkExistingEmail(db, email)
     data = Customer(
@@ -32,6 +51,13 @@ def add(db: Session, cust: CustomerSchema):
 
 
 def update(db: Session, cust: CustomerSchema, cid: int):
+    """
+    Update any existing customer by given id in parameter
+    Check for any existing email before commit
+    :param db: database session
+    :param cust: customer schema
+    :param cid: customer unique id
+    """
     db_customer = get(db, cid)
     service.checkExistingEmail(db, cust.email)
     db_customer.first_name = cust.first_name
@@ -45,6 +71,11 @@ def update(db: Session, cust: CustomerSchema, cid: int):
 
 
 def delete(db: Session, cid: int):
+    """
+    Completely delete customer details by give id in parameter
+    :param db: database session
+    :param cid: customer unique id
+    """
     try:
         data = get(db, cid)
         db.delete(data)
